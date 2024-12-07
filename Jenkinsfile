@@ -17,10 +17,9 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github-credentials-id', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: '4429a8d4-4adc-4298-be65-4997796a7231', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh '''
                             git config user.name "Jenkins"
-                            git config user.email "jenkins@example.com"
                             git add .
                             git commit -m "Update manifests"
                             git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/maartenor/jenkins-sink.git HEAD:main
