@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-httpserver
+  namespace: develop
+  labels:
+    app: busybox-httpserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox-httpserver
+  template:
+    metadata:
+      labels:
+        app: busybox-httpserver
+    spec:
+      containers:
+      - name: httpserver
+        image: python:3.9-slim
+        command: ["python", "-m", "http.server", "8080"]
+        ports:
+        - containerPort: 8088
+        env:
+        - name: DATE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.creationTimestamp
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "200Mi"
+          requests:
+            cpu: "0.2"
+            memory: "50Mi"
+
+
