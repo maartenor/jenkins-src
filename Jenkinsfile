@@ -11,13 +11,15 @@ pipeline {
                 script {
                     sh 'mkdir -p manifests'
                     sh 'cp argocd-application.yaml manifests/'
+                    sh 'cp manifests/deployment.yaml manifests/'
+                    sh 'cp manifests/service.yaml manifests/'
                 }
             }
         }
         stage('Push') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-kube-github-sshkey', keyFileVariable: 'SSH_KEY')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'acd65faa-995f-482d-8a05-5fc99914c85f', keyFileVariable: 'SSH_KEY')]) {
                         sh '''
                             # Configure Git user
                             git config user.name "Jenkins"
@@ -27,11 +29,6 @@ pipeline {
                             mkdir -p ~/.ssh
                             echo "$SSH_KEY" > ~/.ssh/id_rsa
                             chmod 600 ~/.ssh/id_rsa
-
-                            # Disable strict host key checking to avoid prompts
-                            echo "Host github.com" > ~/.ssh/config
-                            echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-                            echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config
 
                             # Add changes and push to GitHub via SSH
                             git add .
