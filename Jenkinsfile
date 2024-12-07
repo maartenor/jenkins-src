@@ -29,7 +29,9 @@ pipeline {
                             chmod 600 ~/.ssh/id_rsa
 
                             # Disable strict host key checking to avoid prompts
-                            echo -e "Host github.com\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
+                            echo "Host github.com" > ~/.ssh/config
+                            echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+                            echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config
 
                             # Add changes and push to GitHub via SSH
                             git add .
