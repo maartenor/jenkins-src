@@ -17,13 +17,24 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: '4429a8d4-4adc-4298-be65-4997796a7231', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-kube-github-sshkey', keyFileVariable: 'SSH_KEY')]) {
                         sh '''
+                            # Configure Git user
                             git config user.name "Jenkins"
-                            git config user.email "faek@john.com"
+                            git config user.email "jenkins@example.com"
+
+                            # Set up the SSH key for authentication
+                            mkdir -p ~/.ssh
+                            echo "$SSH_KEY" > ~/.ssh/id_rsa
+                            chmod 600 ~/.ssh/id_rsa
+
+                            # Disable strict host key checking to avoid prompts
+                            echo -e "Host github.com\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
+
+                            # Add changes and push to GitHub via SSH
                             git add .
                             git commit -m "Update manifests"
-                            git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/maartenor/jenkins-sink.git HEAD:main
+                            git push git@github.com:maartenor/jenkins-sink.git HEAD:main
                         '''
                     }
                 }
