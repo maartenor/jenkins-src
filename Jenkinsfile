@@ -23,20 +23,10 @@ pipeline {
                             git config user.name "Jenkins"
                             git config user.email "jenkins@example.com"
 
-                            # Set up the SSH key for authentication
-                            mkdir -p ~/.ssh
-                            echo "$SSH_KEY" > ~/.ssh/id_rsa
-                            chmod 600 ~/.ssh/id_rsa
-
-                            # Disable strict host key checking to avoid prompts
-                            echo "Host github.com" > ~/.ssh/config
-                            echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-                            echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config
-
-                            # Add changes and push to GitHub via SSH
+                            # Add changes and push to GitHub
                             git add .
                             git commit -m "Update manifests"
-                            git push git@github.com:maartenor/jenkins-sink.git HEAD:main
+                            git push https://github.com/maartenor/jenkins-sink-public.git HEAD:main
                         '''
                     }
                 }
