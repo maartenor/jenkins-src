@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: busybox-httpserver
+  name: httpserver
   namespace: develop
   labels:
     app: busybox-httpserver
@@ -22,10 +22,6 @@ spec:
         ports:
         - containerPort: 8088
         env:
-        - name: DATE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.creationTimestamp
         - name: HOSTNAME
           valueFrom:
             fieldRef:
@@ -34,6 +30,14 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
         resources:
           limits:
             cpu: "0.5"
