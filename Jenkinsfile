@@ -27,6 +27,7 @@ pipeline {
 
                             # Set up the SSH key for authentication
                             mkdir -p ~/.ssh
+                            echo "$SSH_KEY"
                             echo "$SSH_KEY" > ~/.ssh/id_rsa
                             chmod 600 ~/.ssh/id_rsa
 
