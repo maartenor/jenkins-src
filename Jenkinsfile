@@ -10,9 +10,9 @@ pipeline {
             steps {
                 script {
                     sh 'mkdir -p manifests'
-                    sh 'cp argocd-application.yaml manifests/'
-                    sh 'cp manifests/deployment.yaml manifests/'
-                    sh 'cp manifests/service.yaml manifests/'
+                    sh 'cp -f argocd-application.yaml manifests/'
+                    sh 'cp -f manifests/deployment.yaml manifests/'
+                    sh 'cp -f manifests/service.yaml manifests/'
                 }
             }
         }
