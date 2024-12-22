@@ -19,7 +19,7 @@ pipeline {
         stage('Push') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'bdea0192-4438-49eb-bf5f-f58f081c5e5d', keyFileVariable: 'SSH_KEY')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-private-repo-jenkins', keyFileVariable: 'SSH_KEY')]) {
                         sh '''
                             # Configure Git user
                             git config user.name "Jenkins"
