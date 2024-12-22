@@ -10,40 +10,49 @@ pipeline {
             steps {
                 script {
                     sh 'mkdir -p manifests'
-                    // sh 'cp argocd-application.yaml manifests/'
+                    sh 'cp -f argocd-application.yaml manifests/'
                     sh 'cp -f manifests/deployment.yaml deployment.yaml'
                     sh 'cp -f manifests/service.yaml service.yaml'
+                    sh 'cp -f manifests/main.py manifests/main_sec_counter.py'
                 }
             }
         }
-        stage('Push') {
+          stage('Push') {
             steps {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'ssh-private-repo-jenkins', keyFileVariable: 'SSH_KEY')]) {
                         sh '''
-                            # Configure Git user
-                            git config user.name "Jenkins"
-                            git config user.email "jenkins@example.com"
-
+                            # Define a custom SSH directory within the build workspace
+                            WORKSPACE_SSH_DIR=$(pwd)/.ssh
+                            mkdir -p $WORKSPACE_SSH_DIR
+        
                             # Set up the SSH key for authentication
-                            mkdir -p ~/.ssh
-                            echo "$SSH_KEY" > ~/.ssh/id_ed25519
-                            chmod 600 ~/.ssh/id_ed25519
-                            cat ~/.ssh/id_ed25519
-                            echo $(cat ~/.ssh/id_ed25519)
-
-                            # Briefa auth check
-                            ssh -i ~/.ssh/id_ed25519 -T git@github.com
+                            echo "$SSH_KEY" > $WORKSPACE_SSH_DIR/id_ed25519
+                            chmod 600 $WORKSPACE_SSH_DIR/id_ed25519
         
                             # Configure SSH to explicitly use the id_ed25519 key for GitHub
-                            echo "Host github.com" > ~/.ssh/config
-                            echo "    IdentityFile ~/.ssh/id_ed25519" >> ~/.ssh/config
-                            echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+                            echo "Host github.com" > $WORKSPACE_SSH_DIR/config
+                            echo "    IdentityFile $WORKSPACE_SSH_DIR/id_ed25519" >> $WORKSPACE_SSH_DIR/config
+                            echo "    StrictHostKeyChecking no" >> $WORKSPACE_SSH_DIR/config
+        
+                            # Use GIT_SSH_COMMAND to point Git at the custom SSH config
+                            export GIT_SSH_COMMAND="ssh -F $WORKSPACE_SSH_DIR/config"
+        
+                            # Adding sink gitignore to ensure .ssh, Jenkinsfile, etc are not send to sink repo
+                            echo "**/*" > .gitignore  # Ignore everything by default
+                            echo "!manifests/" >> .gitignore  # Allow manifests directory
+                            echo "!argocd-application.yaml" >> .gitignore  # Allow the specific YAML file
+                            echo "!.gitignore" >> .gitignore  # Always track the .gitignore file itself
 
+                            # Pull latest changes and rebase
+                            #git pull --rebase origin main
+                    
                             # Add changes and push to GitHub via SSH
+                            git config user.name "Jenkins"
+                            git config user.email "jenkins@example.com"
                             git add .
                             git commit -m "Update manifests"
-                            git push git@github.com:maartenor/jenkins-sink.git HEAD:main
+                            git push git@github.com:maartenor/jenkins-sink.git HEAD:main --force
                         '''
                     }
                 }
