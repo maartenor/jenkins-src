@@ -28,8 +28,13 @@ pipeline {
                             # Set up the SSH key for authentication
                             mkdir -p ~/.ssh
                             echo "$SSH_KEY"
-                            echo "$SSH_KEY" > ~/.ssh/id_rsa
-                            chmod 600 ~/.ssh/id_rsa
+                            echo "$SSH_KEY" > ~/.ssh/id_ed25519
+                            chmod 600 ~/.ssh/id_ed25519
+        
+                            # Configure SSH to explicitly use the id_ed25519 key for GitHub
+                            echo "Host github.com" > ~/.ssh/config
+                            echo "    IdentityFile ~/.ssh/id_ed25519" >> ~/.ssh/config
+                            echo "    StrictHostKeyChecking no" >> ~/.ssh/config
 
                             # Add changes and push to GitHub via SSH
                             git add .
