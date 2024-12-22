@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: httpserver
   namespace: develop
+  labels:
+    usage: development
 spec:
   selector:
     app: busybox-httpserver
