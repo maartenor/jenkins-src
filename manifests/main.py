@@ -5,7 +5,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Calculate elapsed time in seconds
         elapsed_time = int(time.time()) // 5 * 5
-        message = f'Hello World - {elapsed_time} seconds'
+        message = f'Hello World - {elapsed_time} seconds already elapsed'
         
         # Send HTTP response
         self.send_response(200)
