@@ -30,6 +30,9 @@ pipeline {
                             echo "$SSH_KEY"
                             echo "$SSH_KEY" > ~/.ssh/id_ed25519
                             chmod 600 ~/.ssh/id_ed25519
+
+                            # Briefa auth check
+                            ssh -i ~/.ssh/id_ed25519 -T git@github.com
         
                             # Configure SSH to explicitly use the id_ed25519 key for GitHub
                             echo "Host github.com" > ~/.ssh/config
