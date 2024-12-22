@@ -5,6 +5,7 @@ metadata:
   namespace: develop
   labels:
     app: busybox-httpserver
+    usage: development
 spec:
   replicas: 1
   selector:
