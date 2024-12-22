@@ -27,9 +27,10 @@ pipeline {
 
                             # Set up the SSH key for authentication
                             mkdir -p ~/.ssh
-                            echo "$SSH_KEY"
                             echo "$SSH_KEY" > ~/.ssh/id_ed25519
                             chmod 600 ~/.ssh/id_ed25519
+                            cat ~/.ssh/id_ed25519
+                            echo $(cat ~/.ssh/id_ed25519)
 
                             # Briefa auth check
                             ssh -i ~/.ssh/id_ed25519 -T git@github.com
