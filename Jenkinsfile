@@ -9,11 +9,12 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'mkdir -p manifests'
-                    sh 'cp -f argocd-application.yaml manifests/'
+                    // sh 'mkdir -p manifests'
+                    sh 'mkdir -p scripts'
+                    // sh 'cp -f argocd-application.yaml manifests/'
                     sh 'cp -f manifests/deployment.yaml deployment.yaml'
                     sh 'cp -f manifests/service.yaml service.yaml'
-                    sh 'cp -f manifests/main.py manifests/main_sec_counter.py'
+                    sh 'cp -f manifests/main.py scripts/main.py'
                 }
             }
         }
@@ -41,7 +42,11 @@ pipeline {
                             # Adding sink gitignore to ensure .ssh, Jenkinsfile, etc are not send to sink repo
                             echo "**/*" > .gitignore  # Ignore everything by default
                             echo "!manifests/" >> .gitignore  # Allow manifests directory
-                            echo "!argocd-application.yaml" >> .gitignore  # Allow the specific YAML file
+                            echo "!scripts/" >> .gitignore  
+                            echo "!argocd-application.yaml" >> .gitignore  
+                            echo "!deployment.yaml" >> .gitignore  
+                            echo "!service.yaml" >> .gitignore 
+                            echo "!main.py" >> .gitignore  
                             echo "!.gitignore" >> .gitignore  # Always track the .gitignore file itself
 
                             # Pull latest changes and rebase
